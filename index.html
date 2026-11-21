@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Megaprojectplanner.us.ci — Compare Projects for Primavera P6 Schedules</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --navy:#07273f; --navy-2:#0a3355; --ink:#12222f; --body:#43586a; --muted:#6b7f90;
+    --blue:#1283c6; --blue-dark:#0d6ca6; --blue-soft:#e8f3fa;
+    --bg:#ffffff; --bg-alt:#f2f4f5; --line:#dfe6ea; --card:#ffffff;
+    --ok:#1d8a4e; --ok-bg:#e5f4ec; --warn:#b45309; --warn-bg:#fdf0dd;
+    --bad:#c22f2f; --bad-bg:#fbe7e7; --chg:#0d6ca6; --chg-bg:#e3f0f9;
+    --head-font:"Archivo",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --shadow:0 18px 50px rgba(7,39,63,.16);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ink:#e8f0f5; --body:#b3c4d1; --muted:#8ba1b1;
+      --bg:#0b1a26; --bg-alt:#0e2233; --line:#1e3a4e; --card:#10293d;
+      --blue-soft:#123650; --ok-bg:#12382a; --warn-bg:#3d2c10; --bad-bg:#3d1a1a; --chg-bg:#123650;
+      --shadow:0 18px 50px rgba(0,0,0,.5);
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--head-font);color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+  button,[role="button"],select,summary,input:not([type="checkbox"]){min-height:2.25rem}
+  a{color:var(--blue)}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+  h1,h2,h3{line-height:1.08;letter-spacing:-.01em;margin:0}
+  .kicker{color:var(--blue);font-weight:700;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;margin:0 0 14px}
+  .lead{color:var(--body);font-size:1.13rem;max-width:56ch}
+  section{padding:clamp(56px,8vw,104px) 0}
+  section.alt{background:var(--bg-alt)}
+  .sec-head{max-width:720px;margin-bottom:44px}
+  .sec-head h2{font-size:clamp(1.9rem,4vw,3rem);font-weight:800;margin-bottom:16px}
+
+  /* ---------- header ---------- */
+  header.site{position:sticky;top:0;z-index:60;background:var(--bg);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;gap:28px;height:72px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:800;font-size:1.12rem;white-space:nowrap}
+  .brand .mark{width:38px;height:38px;flex:none}
+  .brand small{display:block;font-size:.62rem;font-weight:600;color:var(--muted);letter-spacing:.08em}
+  .brand .bt{line-height:1.05}
+  nav.links{display:flex;gap:26px;margin-left:auto}
+  nav.links a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.95rem;padding:8px 2px}
+  nav.links a:hover{color:var(--blue)}
+  .nav-cta{display:flex;gap:10px;margin-left:8px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:3px;
+    font-family:inherit;font-weight:700;font-size:.86rem;letter-spacing:.05em;text-transform:uppercase;
+    padding:10px 20px;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s,color .15s;min-height:44px}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-blue:hover{background:var(--blue-dark)}
+  .btn-outline{background:transparent;color:var(--ink);border-color:var(--ink)}
+  .btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+  .btn-ghost{background:transparent;color:var(--ink)}
+  .btn-ghost:hover{color:var(--blue)}
+  .btn-sm{padding:7px 14px;min-height:38px;font-size:.78rem}
+  .burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:10px}
+  .burger svg{width:26px;height:26px;stroke:var(--ink)}
+  .m-auth{display:none}
+  @media (max-width:900px){
+    nav.links,.nav-cta{display:none}
+    .m-auth{display:block;color:var(--blue)!important;font-weight:700}
+    .burger{display:block}
+    .nav-cta{margin-left:0}
+    header.site.open nav.links{display:flex;position:absolute;top:72px;left:0;right:0;background:var(--bg);flex-direction:column;padding:14px 24px 20px;border-bottom:1px solid var(--line);gap:6px}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{background:linear-gradient(115deg,#051c30 0%,var(--navy) 55%,var(--navy-2) 100%);color:#fff;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;background:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.045) 0 1px,transparent 1px 120px),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 120px);pointer-events:none}
+  .hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.25fr .9fr;gap:56px;align-items:center;padding-top:clamp(56px,7vw,96px);padding-bottom:clamp(56px,7vw,96px)}
+  .hero h1{font-size:clamp(2.2rem,4.6vw,3.6rem);font-weight:800;margin-bottom:22px}
+  .hero p{color:#c3d5e2;font-size:1.15rem;max-width:52ch;margin:0 0 32px}
+  .hero .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--navy)}
+  .btn-white:hover{background:var(--blue-soft)}
+  .btn-line-w{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+  .btn-line-w:hover{border-color:#fff}
+  .howbox{border:1px solid rgba(255,255,255,.35);padding:30px 32px;background:rgba(255,255,255,.03)}
+  .howbox h3{color:#5db9ec;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:20px;font-weight:700}
+  .howbox ul{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+  .howbox li{display:flex;gap:12px;align-items:flex-start;font-size:1rem;color:#e6f0f6}
+  .tick{color:#5db9ec;font-weight:800;flex:none}
+  @media (max-width:900px){.hero .wrap{grid-template-columns:1fr}}
+
+  /* ---------- cards ---------- */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);background:var(--card)}
+  .cards > div{padding:34px 30px 38px;border-right:1px solid var(--line)}
+  .cards > div:last-child{border-right:0}
+  .cards .ic{width:34px;height:34px;color:var(--blue);margin-bottom:18px}
+  .cards h3{font-size:1.18rem;font-weight:700;margin-bottom:10px}
+  .cards p{color:var(--body);margin:0;font-size:.98rem}
+  @media (max-width:900px){.cards{grid-template-columns:1fr}.cards>div{border-right:0;border-bottom:1px solid var(--line)}.cards>div:last-child{border-bottom:0}}
+
+  /* ---------- split / preview ---------- */
+  .split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,72px);align-items:center}
+  @media (max-width:960px){.split{grid-template-columns:1fr}}
+  .split h2{font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:800;margin-bottom:16px}
+  .pro{display:inline-block;background:var(--blue);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.08em;padding:3px 9px;border-radius:3px;vertical-align:middle;margin-left:10px;text-transform:uppercase}
+  .checklist{list-style:none;margin:26px 0 0;padding:0;display:grid;gap:18px}
+  .checklist li{display:flex;gap:12px;color:var(--body);font-size:1.02rem}
+  .checklist .tick{color:var(--blue)}
+  .preview{border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow)}
+  .preview .pbar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--bg-alt)}
+  .preview .pbar .dot{width:10px;height:10px;border-radius:50%}
+  .preview .pbar span{font-family:var(--mono);font-size:.74rem;color:var(--muted);margin-left:6px}
+  .preview .pbody{padding:18px}
+  .mini-row{display:grid;grid-template-columns:118px 1fr;gap:12px;align-items:center;margin-bottom:11px;font-size:.72rem}
+  .mini-row .nm{font-family:var(--mono);color:var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mini-track{position:relative;height:22px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 25%)}
+  .mini-bar{position:absolute;height:8px;border-radius:2px}
+  .mini-bar.a{top:1px;background:#7d99ad}
+  .mini-bar.b{top:12px;background:var(--blue)}
+  .mini-bar.b.chg{background:#e08a1e}
+  .mini-bar.b.add{background:var(--ok)}
+  .mini-legend{display:flex;gap:18px;font-size:.72rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:6px;flex-wrap:wrap}
+  .mini-legend i{display:inline-block;width:14px;height:7px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+  /* ---------- steps ---------- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+  .steps .num{color:var(--blue);font-weight:700;font-size:.85rem;letter-spacing:.1em;margin-bottom:14px}
+  .steps h3{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+  .steps p{color:var(--body);margin:0}
+  @media (max-width:900px){.steps{grid-template-columns:1fr;gap:28px}}
+
+  .focusbox{border:1px solid var(--line);background:var(--card)}
+  .focusbox li{display:flex;gap:12px;padding:20px 26px;border-bottom:1px solid var(--line);font-weight:600;font-size:1.02rem;color:var(--ink)}
+  .focusbox li:last-child{border-bottom:0}
+  .focusbox{list-style:none;margin:0;padding:0}
+
+  /* ---------- faq ---------- */
+  .faq{max-width:900px}
+  details.faq-item{border-top:1px solid var(--line)}
+  details.faq-item:last-child{border-bottom:1px solid var(--line)}
+  details.faq-item summary{cursor:pointer;font-weight:700;font-size:1.08rem;padding:22px 34px 22px 0;list-style:none;position:relative}
+  details.faq-item summary::-webkit-details-marker{display:none}
+  details.faq-item summary::after{content:"+";position:absolute;right:4px;top:16px;font-size:1.5rem;color:var(--blue);font-weight:400}
+  details.faq-item[open ] summary::after{content:"–"}
+  details.faq-item p{color:var(--body);margin:0 0 24px;max-width:70ch}
+
+  /* ---------- cta band / footer ---------- */
+  .cta-band{background:var(--navy);color:#fff;text-align:center}
+  .cta-band h2{font-size:clamp(1.8rem,3.6vw,2.7rem);font-weight:800;margin-bottom:14px}
+  .cta-band p{color:#c3d5e2;max-width:56ch;margin:0 auto 30px}
+  footer.site{background:#04182a;color:#9db4c4;padding:56px 0 34px;font-size:.92rem}
+  footer.site .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px}
+  footer.site h4{color:#fff;font-size:.95rem;margin:0 0 14px}
+  footer.site ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+  footer.site a{color:#9db4c4;text-decoration:none}
+  footer.site a:hover{color:#fff}
+  footer.site .fine{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  @media (max-width:900px){footer.site .cols{grid-template-columns:1fr 1fr}}
+
+  /* ---------- auth modal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(4,20,34,.62);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+  .overlay.open{display:flex}
+  .modal{background:var(--bg);color:var(--ink);width:100%;max-width:440px;box-shadow:var(--shadow);max-height:92vh;overflow:auto}
+  .modal .mhead{padding:26px 30px 0;display:flex;align-items:flex-start;justify-content:space-between}
+  .modal h2{font-size:1.45rem;font-weight:800}
+  .modal .sub{color:var(--body);font-size:.93rem;margin:6px 30px 0}
+  .x{background:none;border:0;font-size:1.4rem;cursor:pointer;color:var(--muted);padding:6px 10px;line-height:1}
+  .tabs{display:flex;gap:0;margin:22px 30px 0;border-bottom:2px solid var(--line)}
+  .tabs button{flex:1;background:none;border:0;font-family:inherit;font-weight:700;font-size:.95rem;padding:10px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
+  .tabs button.on{color:var(--blue);border-bottom-color:var(--blue)}
+  form.auth{padding:22px 30px 30px;display:grid;gap:14px}
+  .field label{display:block;font-weight:600;font-size:.86rem;margin-bottom:6px}
+  .field input{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:3px;padding:10px 12px;font-family:inherit;font-size:.98rem}
+  .field input:focus{outline:2px solid var(--blue);outline-offset:0;border-color:var(--blue)}
+  .err{display:none;background:var(--bad-bg);color:var(--bad);padding:10px 14px;font-size:.88rem;font-weight:600;border-radius:3px}
+  .err.show{display:block}
+  .fine-print{font-size:.8rem;color:var(--muted);text-align:center;margin:0}
+
+  /* ---------- app ---------- */
+  #appView{display:none}
+  .appbar{background:var(--navy);color:#fff}
+  .appbar .wrap{display:flex;align-items:center;gap:18px;min-height:60px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
+  .appbar .who{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:.92rem}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--blue);display:inline-flex;align-items:center;justify-content:center;font-weight:800;color:#fff;flex:none}
+  .apptabs{display:flex;gap:4px;border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:72px;z-index:40;overflow-x:auto}
+  .apptabs .wrap{display:flex;gap:4px}
+  .apptabs button{background:none;border:0;border-bottom:3px solid transparent;font-family:inherit;font-weight:700;font-size:.95rem;padding:14px 18px;cursor:pointer;color:var(--muted);white-space:nowrap}
+  .apptabs button.on{color:var(--blue);border-bottom-color:var(--blue)}
+  .app-main{padding:34px 0 70px;background:var(--bg-alt);min-height:70vh}
+  .panel{background:var(--card);border:1px solid var(--line);padding:26px;margin-bottom:22px}
+  .panel h2{font-size:1.35rem;font-weight:800;margin-bottom:6px}
+  .panel .sub{color:var(--body);margin:0 0 20px;font-size:.96rem}
+  .ver-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:6px}
+  @media (max-width:820px){.ver-grid{grid-template-columns:1fr}}
+  .ver{border:1px solid var(--line);padding:18px 20px}
+  .ver h3{font-size:1rem;margin-bottom:4px}
+  .ver p{margin:0;color:var(--body);font-size:.9rem}
+  .ver .meta{font-family:var(--mono);font-size:.78rem;color:var(--muted);margin-top:10px;display:grid;gap:3px}
+  #metaA,#metaB{display:contents}
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:22px 0}
+  @media (max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{border:1px solid var(--line);background:var(--card);padding:16px 18px}
+  .stat .n{font-size:1.7rem;font-weight:800;line-height:1.1}
+  .stat .l{font-size:.8rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+  .stat.c-chg .n{color:var(--chg)} .stat.c-add .n{color:var(--ok)} .stat.c-del .n{color:var(--bad)} .stat.c-var .n{color:var(--warn)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+  .chip-btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 16px;font-family:inherit;font-weight:600;font-size:.86rem;cursor:pointer;min-height:38px}
+  .chip-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .filters input[type="search"]{margin-left:auto;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:3px;padding:9px 12px;font-family:inherit;min-width:210px}
+  .tblwrap{overflow-x:auto}
+  table.cmp{width:100%;border-collapse:collapse;font-size:.9rem;min-width:760px}
+  table.cmp th{text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:10px 12px;border-bottom:2px solid var(--line);white-space:nowrap}
+  table.cmp td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.cmp td.id,table.cmp td.num{font-family:var(--mono);font-size:.84rem;white-space:nowrap}
+  .st{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .st-changed{background:var(--chg-bg);color:var(--chg)} .st-added{background:var(--ok-bg);color:var(--ok)}
+  .st-deleted{background:var(--bad-bg);color:var(--bad)} .st-same{background:var(--bg-alt);color:var(--muted)}
+  .var-pos{color:var(--bad);font-weight:700}.var-neg{color:var(--ok);font-weight:700}.var-zero{color:var(--muted)}
+  .diff-note{font-size:.8rem;color:var(--muted);display:block;margin-top:2px}
+  /* gantt */
+  .gantt{overflow-x:auto}
+  .gantt-inner{min-width:820px}
+  .g-head,.g-row{display:grid;grid-template-columns:230px 1fr;gap:14px;align-items:center}
+  .g-head{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-bottom:8px}
+  .g-months{position:relative;height:18px}
+  .g-months span{position:absolute;transform:translateX(2px);white-space:nowrap}
+  .g-row{padding:7px 0;border-bottom:1px solid var(--line)}
+  .g-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .g-name small{display:block;font-family:var(--mono);font-weight:400;color:var(--muted);font-size:.72rem}
+  .g-track{position:relative;height:30px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px var(--colw,60px))}
+  .g-bar{position:absolute;height:9px;border-radius:2px;min-width:3px}
+  .g-bar.a{top:2px;background:#7d99ad}
+  .g-bar.b{top:17px;background:var(--blue)}
+  .g-bar.b.chg{background:#e08a1e}.g-bar.b.add{background:var(--ok)}
+  .g-bar.del{opacity:.35;background:repeating-linear-gradient(45deg,var(--bad) 0 5px,transparent 5px 10px)}
+  .today-line{position:absolute;top:0;bottom:0;width:2px;background:var(--bad);opacity:.55}
+  /* editor */
+  table.edit{width:100%;border-collapse:collapse;font-size:.9rem;min-width:820px}
+  table.edit th{text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:10px 10px;border-bottom:2px solid var(--line)}
+  table.edit td{padding:6px 10px;border-bottom:1px solid var(--line)}
+  table.edit input{width:100%;border:1px solid transparent;background:transparent;color:var(--ink);font-family:inherit;font-size:.9rem;padding:7px 8px;border-radius:3px}
+  table.edit input:hover{border-color:var(--line)}
+  table.edit input:focus{border-color:var(--blue);outline:none;background:var(--card)}
+  table.edit input[type="number"]{font-family:var(--mono)}
+  .row-del{background:none;border:0;color:var(--bad);cursor:pointer;font-size:1.05rem;padding:8px}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+  .toolbar .note{color:var(--muted);font-size:.86rem}
+  .empty{padding:34px;text-align:center;color:var(--muted)}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:13px 22px;font-weight:600;font-size:.92rem;z-index:200;transition:transform .3s;box-shadow:var(--shadow);max-width:92vw;text-align:center}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.toast{transition:none}}
+</style>
+</head>
+<body>
+
+<!-- ======================= LANDING ======================= -->
+<div id="landingView">
+<header class="site" id="siteHeader">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="MegaProjectPlanner home">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#1283c6"/><circle cx="20" cy="20" r="12.5" fill="#5db9ec"/><circle cx="20" cy="20" r="7" fill="#fff"/></svg>
+      <span class="bt">MegaProjectPlanner<small>MEGAPROJECTPLANNER.US.CI</small></span>
+    </a>
+    <button class="burger" id="burger" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <nav class="links">
+      <a href="#idea">The Idea</a>
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="#why">Why It Matters</a>
+      <a href="#faq">FAQ</a>
+      <a href="#" class="m-auth" data-auth="signin">Sign In</a>
+      <a href="#" class="m-auth" data-auth="signup">Create Free Account</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="btn btn-outline btn-sm" data-auth="signin">Sign In</button>
+      <button class="btn btn-blue btn-sm" data-auth="signup">Create Free Account</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <h1>See Exactly What Changed Between Two Versions of Your Plan</h1>
+        <p>Compare Projects in MegaProjectPlanner analyses the differences between two versions of the same Primavera P6 project, side by side — highlighting schedule shifts, task changes and dependency modifications.</p>
+        <div class="cta-row">
+          <button class="btn btn-blue" data-auth="signup">Create Free Account →</button>
+          <button class="btn btn-line-w" data-auth="signin">Sign In</button>
+        </div>
+      </div>
+      <div class="howbox">
+        <h3>How Comparison Works</h3>
+        <ul>
+          <li><span class="tick">✓</span> Two versions of the same project</li>
+          <li><span class="tick">✓</span> Same Project ID required</li>
+          <li><span class="tick">✓</span> Interactive Gantt and activity table</li>
+          <li><span class="tick">✓</span> Runs entirely in your browser</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEA -->
+  <section id="idea">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">The Idea</p>
+        <h2>See What Moved Between Two Versions of the Plan</h2>
+        <p class="lead">Compare Projects puts two versions of the same project side by side, so the changes are visible instead of buried in two separate files.</p>
+      </div>
+      <div class="cards">
+        <div>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="6" r="2.4"/><circle cx="19" cy="6" r="2.4"/><circle cx="12" cy="18" r="2.4"/><path d="M7.4 6h9.2M6.2 8.2l4 7.4M17.8 8.2l-4 7.4"/></svg>
+          <h3>Two Versions, One View</h3>
+          <p>The current plan and the version you compare it against are drawn on one timeline, so a slipped activity stands out immediately.</p>
+        </div>
+        <div>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3.5 3.5h7.6l9.4 9.4-7.6 7.6-9.4-9.4z"/><circle cx="8" cy="8" r="1.8"/></svg>
+          <h3>Same Project ID</h3>
+          <p>Activities are matched by Activity ID between the two versions — the same matching rule Primavera P6 uses for baselines and updates.</p>
+        </div>
+        <div>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+          <h3>Visual, Not a Spreadsheet</h3>
+          <p>Read the change on an interactive Gantt first, then drop into the activity table for the line-by-line detail behind every shift.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES / WHAT YOU GET -->
+  <section class="alt" id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">What You Get</p>
+        <h2>Spot Differences Between Schedule Versions</h2>
+      </div>
+      <div class="split">
+        <div class="preview" aria-hidden="true">
+          <div class="pbar"><span class="dot" style="background:#e0655f"></span><span class="dot" style="background:#e8b13f"></span><span class="dot" style="background:#57b06a"></span><span>M1-DES-2 · Package F — Baseline vs Update</span></div>
+          <div class="pbody" id="miniGantt"></div>
+        </div>
+        <div>
+          <h2 style="font-size:1.6rem">Read the Change in Three Connected Ways <span class="pro">Pro</span></h2>
+          <p class="lead" style="font-size:1.05rem">Bring in a second version of the project and read the difference through the views that suit the review.</p>
+          <ul class="checklist">
+            <li><span class="tick">✓</span> Interactive Gantt charts that highlight schedule shifts, task changes and dependency modifications</li>
+            <li><span class="tick">✓</span> An Activity Table with a line-by-line breakdown of changes for selected activities</li>
+            <li><span class="tick">✓</span> A summary view with change counts, added and deleted activities, and project finish variance</li>
+          </ul>
+          <p style="margin-top:26px"><button class="btn btn-blue" data-auth="signup">Try It Free →</button></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">How It Works</p>
+        <h2>Compare Two Plans in Three Steps</h2>
+      </div>
+      <div class="steps">
+        <div>
+          <p class="num">01 / 03</p>
+          <h3>Create Your Free Account</h3>
+          <p>Sign up with your name and email. Your workspace opens straight away — no installation, no P6 licence needed to read a schedule.</p>
+        </div>
+        <div>
+          <p class="num">02 / 03</p>
+          <h3>Load the Two Versions</h3>
+          <p>Open the current update of the project, then load the baseline or the previous update you want to compare it against.</p>
+        </div>
+        <div>
+          <p class="num">03 / 03</p>
+          <h3>Read the Differences</h3>
+          <p>The Compare view lines both versions up by Activity ID and flags every date, duration and progress change between them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOCUS -->
+  <section class="alt">
+    <div class="wrap">
+      <div class="split">
+        <div>
+          <p class="kicker">Focus the Review</p>
+          <h2>Choose What Counts as a Difference</h2>
+          <p class="lead" style="font-size:1.05rem">Filter the comparison so the review only shows the changes that matter to the decision in front of you.</p>
+          <p style="color:var(--body)">In the Compare layout, the baseline version is shown with top-oriented bars and the current update with bottom-oriented bars, so task shifts are visible at a glance, with the table underneath giving the exact variance in days.</p>
+        </div>
+        <ul class="focusbox">
+          <li><span class="tick" style="color:var(--blue)">✓</span> Filter on duration, name and relationships</li>
+          <li><span class="tick" style="color:var(--blue)">✓</span> Show only changed, added or deleted activities</li>
+          <li><span class="tick" style="color:var(--blue)">✓</span> Search by Activity ID or activity name</li>
+          <li><span class="tick" style="color:var(--blue)">✓</span> Export the change report as a CSV file</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section id="why">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Why It Matters</p>
+        <h2>Data-Driven Decisions for Project Controls</h2>
+        <p class="lead">The comparison is built to support the decisions that keep a project moving, from spotting scope creep to shortening the review cycle.</p>
+      </div>
+      <div class="cards">
+        <div>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <h3>Identify Changes and Scope Creep</h3>
+          <p>Quickly detect variances, delays or improvements across activities, durations, costs and other project parameters.</p>
+        </div>
+        <div>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>
+          <h3>Track Progress Against Baselines</h3>
+          <p>Compare versions against baselines, saved snapshots or updates over time, without a full P6 setup.</p>
+        </div>
+        <div>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+          <h3>Fasten Review Cycles</h3>
+          <p>A focused, parameter-based comparison with all changes in one centralised view fits each team context.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="alt" id="faq">
+    <div class="wrap">
+      <p class="kicker">FAQ</p>
+      <h2 style="font-size:clamp(1.9rem,4vw,3rem);font-weight:800;margin-bottom:36px">Frequently Asked Questions</h2>
+      <div class="faq">
+        <details class="faq-item" open>
+          <summary>Which projects can I compare?</summary>
+          <p>Only projects with the same Project ID can be compared. The feature compares two versions of the same project, such as the current plan against a baseline, saved snapshots, or updates over time.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What do the two sets of bars mean?</summary>
+          <p>The top-oriented bars show the earlier version (for example the baseline) and the bottom-oriented bars show the current update. Where the two bars no longer line up, the activity has moved — and the table tells you by how many days.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Which changes does the comparison detect?</summary>
+          <p>Start and finish date shifts, duration changes, progress (% complete) changes, renamed activities, plus activities that were added to or deleted from the newer version.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need Primavera P6 installed?</summary>
+          <p>No. MegaProjectPlanner runs in the browser. Create a free account, open your workspace, and work with the built-in sample megaproject or edit the update version activity by activity to model your own programme.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can I share the results of a comparison?</summary>
+          <p>Yes — the Compare view exports a CSV change report with every activity, its status and its variance, ready to attach to a progress report or an extension-of-time submission.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band">
+    <div class="wrap">
+      <h2>Open Your First Comparison in Minutes</h2>
+      <p>Create a free account and the workspace opens with a sample megaproject already loaded — baseline against current update, ready to explore.</p>
+      <button class="btn btn-white" data-auth="signup">Create Free Account →</button>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>MegaProjectPlanner</h4>
+        <p style="margin:0;max-width:34ch">Schedule viewing and version comparison for Primavera P6 programmes — built for planning engineers and project controls teams on roads, bridges and utilities megaprojects.</p>
+      </div>
+      <div>
+        <h4>Features</h4>
+        <ul>
+          <li><a href="#features">Compare Projects</a></li>
+          <li><a href="#features">Interactive Gantt</a></li>
+          <li><a href="#features">Activity Table</a></li>
+          <li><a href="#how">How It Works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Workspace</h4>
+        <ul>
+          <li><a href="#" data-auth="signup">Create Account</a></li>
+          <li><a href="#" data-auth="signin">Sign In</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Project Controls</h4>
+        <ul>
+          <li><a href="#why">Baseline Tracking</a></li>
+          <li><a href="#why">Scope Creep Detection</a></li>
+          <li><a href="#why">Review Cycles</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fine">
+      <span>© 2026 MegaProjectPlanner · megaprojectplanner.us.ci</span>
+      <span>Built for planners, by a planner.</span>
+    </div>
+  </div>
+</footer>
+</div>
+
+<!-- ======================= AUTH MODAL ======================= -->
+<div class="overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="modal">
+    <div class="mhead">
+      <h2 id="authTitle">Create your account</h2>
+      <button class="x" id="authClose" aria-label="Close">×</button>
+    </div>
+    <p class="sub" id="authSub">Your workspace opens as soon as your account is created.</p>
+    <div class="tabs">
+      <button id="tabSignup" class="on" type="button">Create Account</button>
+      <button id="tabSignin" type="button">Sign In</button>
+    </div>
+    <form class="auth" id="authForm" novalidate>
+      <div class="err" id="authErr"></div>
+      <div class="field" id="fName">
+        <label for="inName">Full name</label>
+        <input id="inName" type="text" autocomplete="name" placeholder="e.g. Muhammad Nouman Qamar" />
+      </div>
+      <div class="field">
+        <label for="inEmail">Email address</label>
+        <input id="inEmail" type="email" autocomplete="email" placeholder="you@company.com" />
+      </div>
+      <div class="field">
+        <label for="inPass">Password</label>
+        <input id="inPass" type="password" autocomplete="new-password" placeholder="At least 6 characters" />
+      </div>
+      <div class="field" id="fConfirm">
+        <label for="inConfirm">Confirm password</label>
+        <input id="inConfirm" type="password" autocomplete="new-password" placeholder="Repeat your password" />
+      </div>
+      <button class="btn btn-blue" type="submit" id="authSubmit" style="width:100%">Create Account &amp; Open Workspace</button>
+      <div style="display:flex;align-items:center;gap:10px"><span style="flex:1;height:1px;background:var(--line)"></span><span style="color:var(--muted);font-size:.82rem">or</span><span style="flex:1;height:1px;background:var(--line)"></span></div>
+      <button class="btn btn-outline" type="button" id="googleBtn" style="width:100%">Continue with Google</button>
+      <p class="fine-print" id="authSwitch"></p>
+    </form>
+  </div>
+</div>
+
+<!-- ======================= APP ======================= -->
+<div id="appView">
+  <div class="appbar">
+    <div class="wrap">
+      <a class="brand" href="#" id="appBrand" style="color:#fff">
+        <svg class="mark" viewBox="0 0 40 40" aria-hidden="true" style="width:32px;height:32px"><circle cx="20" cy="20" r="18" fill="#1283c6"/><circle cx="20" cy="20" r="12.5" fill="#5db9ec"/><circle cx="20" cy="20" r="7" fill="#fff"/></svg>
+        <span class="bt" style="font-size:1rem">MegaProjectPlanner<small style="color:#9db4c4">WORKSPACE</small></span>
+      </a>
+      <div class="who">
+        <span class="avatar" id="avatarInit">?</span>
+        <span id="whoText">Signed in</span>
+        <a class="btn btn-line-w btn-sm" href="planner.html" target="_blank" rel="noopener" style="text-decoration:none">MegaProjectPlanner App</a>
+        <button class="btn btn-line-w btn-sm" id="signOutBtn">Sign Out</button>
+      </div>
+    </div>
+  </div>
+  <div class="apptabs">
+    <div class="wrap">
+      <button data-tab="compare" class="on">Compare Projects</button>
+      <button data-tab="gantt">Gantt Chart</button>
+      <button data-tab="editor">Edit Activities</button>
+    </div>
+  </div>
+  <div class="app-main">
+    <div class="wrap">
+
+      <!-- COMPARE TAB -->
+      <div id="tab-compare">
+        <div class="panel">
+          <h2>Compare Projects</h2>
+          <p class="sub">Two versions of the same project, matched by Activity ID. Version A is the approved baseline; Version B is the current update. Edit Version B in the Edit Activities tab and the comparison updates itself.</p>
+          <div class="ver-grid">
+            <div class="ver">
+              <h3>Version A — Baseline Programme (Rev 0)</h3>
+              <p>M1-DES-2 · Package F — Roads, Bridges &amp; Utilities</p>
+              <div class="meta"><span>Project ID: M1-DES-2-PKF</span><span id="metaA"></span></div>
+            </div>
+            <div class="ver">
+              <h3>Version B — Current Update (Rev 4)</h3>
+              <p>M1-DES-2 · Package F — Roads, Bridges &amp; Utilities</p>
+              <div class="meta"><span>Project ID: M1-DES-2-PKF</span><span id="metaB"></span></div>
+            </div>
+          </div>
+          <div class="stats" id="statRow"></div>
+          <div class="filters" id="cmpFilters">
+            <button class="chip-btn on" data-f="all">All activities</button>
+            <button class="chip-btn" data-f="changed">Changed</button>
+            <button class="chip-btn" data-f="added">Added</button>
+            <button class="chip-btn" data-f="deleted">Deleted</button>
+            <button class="chip-btn" data-f="same">Unchanged</button>
+            <input type="search" id="cmpSearch" placeholder="Search ID or name…" aria-label="Search activities" />
+          </div>
+          <div class="tblwrap">
+            <table class="cmp">
+              <thead><tr>
+                <th>Activity ID</th><th>Activity Name</th><th>Status</th>
+                <th>Start A → B</th><th>Finish A → B</th><th>Duration A → B</th><th>% A → B</th><th>Finish Var.</th>
+              </tr></thead>
+              <tbody id="cmpBody"></tbody>
+            </table>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-blue btn-sm" id="csvBtn">Download Change Report (CSV)</button>
+            <button class="btn btn-outline btn-sm" id="resetBtn">Reset Sample Data</button>
+            <span class="note">Finish variance is measured in calendar days against the baseline finish.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- GANTT TAB -->
+      <div id="tab-gantt" style="display:none">
+        <div class="panel">
+          <h2>Comparison Gantt</h2>
+          <p class="sub">Top bar = baseline (Version A) · Bottom bar = current update (Version B). Orange means the activity moved or changed, green is new scope, hatched is deleted scope.</p>
+          <div class="gantt"><div class="gantt-inner" id="ganttInner"></div></div>
+          <div class="mini-legend" style="margin-top:16px">
+            <span><i style="background:#7d99ad"></i>Baseline</span>
+            <span><i style="background:var(--blue)"></i>Update — unchanged</span>
+            <span><i style="background:#e08a1e"></i>Update — changed</span>
+            <span><i style="background:var(--ok)"></i>Added</span>
+            <span><i style="background:var(--bad)"></i>Data date</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDITOR TAB -->
+      <div id="tab-editor" style="display:none">
+        <div class="panel">
+          <h2>Version B — Current Update Activities</h2>
+          <p class="sub">Edit dates, durations and progress, add new scope or remove activities — then switch back to Compare Projects to see exactly what changed against the baseline.</p>
+          <div class="tblwrap">
+            <table class="edit">
+              <thead><tr><th style="width:110px">Activity ID</th><th>Activity Name</th><th style="width:160px">Start</th><th style="width:110px">Duration (d)</th><th style="width:100px">% Complete</th><th style="width:52px"></th></tr></thead>
+              <tbody id="editBody"></tbody>
+            </table>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-blue btn-sm" id="addActBtn">+ Add Activity</button>
+            <button class="btn btn-outline btn-sm" id="resetBtn2">Reset Sample Data</button>
+            <span class="note">Finish dates are calculated from start + duration.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+/* ---------------- Firebase — real accounts & saved work ---------------- */
+var firebaseConfig={
+  apiKey:"AIzaSyAqHL8z4um2svoVUtUfuPn6ONhhPa9QOps",
+  authDomain:"megaprojectplanner.firebaseapp.com",
+  projectId:"megaprojectplanner",
+  storageBucket:"megaprojectplanner.firebasestorage.app",
+  messagingSenderId:"300326155803",
+  appId:"1:300326155803:web:40bfc2628be2a750666abe"
+};
+var fbAuth=null, fbDb=null;
+try{
+  if(window.firebase){
+    firebase.initializeApp(firebaseConfig);
+    fbAuth=firebase.auth();
+    fbDb=firebase.firestore();
+  }
+}catch(e){ fbAuth=null; fbDb=null; }
+function fbErr(err){
+  var c=(err&&err.code)||"";
+  if(c==="auth/email-already-in-use") return "An account with this email already exists — use Sign In.";
+  if(c==="auth/invalid-email") return "Please enter a valid email address.";
+  if(c==="auth/weak-password") return "Your password needs at least 6 characters.";
+  if(c==="auth/user-not-found"||c==="auth/wrong-password"||c==="auth/invalid-credential") return "Email or password does not match — check them and try again.";
+  if(c==="auth/too-many-requests") return "Too many attempts — please wait a few minutes and try again.";
+  if(c==="auth/popup-closed-by-user") return "Google sign-in was closed before finishing — try again.";
+  if(c==="auth/unauthorized-domain") return "This domain is not yet allowed for Google sign-in — please use email and password for now.";
+  if(c==="auth/network-request-failed") return "Network error — check your connection and try again.";
+  return "Something went wrong — please try again.";
+}
+function saveProfile(user,name){
+  if(!fbDb) return Promise.resolve();
+  return fbDb.collection("users").doc(user.uid).set({name:name,email:user.email,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});
+}
+var saveTimer=null;
+function saveWork(){
+  if(!fbDb||!fbAuth||!fbAuth.currentUser) return;
+  var uid=fbAuth.currentUser.uid;
+  fbDb.collection("users").doc(uid).collection("projects").doc("m1-des-2").set({verB:verB,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});
+}
+function saveWorkSoon(){ if(saveTimer) clearTimeout(saveTimer); saveTimer=setTimeout(saveWork,1200); }
+function loadWork(user){
+  if(!fbDb) return Promise.resolve();
+  return fbDb.collection("users").doc(user.uid).collection("projects").doc("m1-des-2").get().then(function(snap){
+    if(snap.exists&&snap.data()&&Array.isArray(snap.data().verB)&&snap.data().verB.length){ verB=snap.data().verB; }
+    renderAll();
+  }).catch(function(){});
+}
+/* ---------------- data ---------------- */
+var DAY=86400000;
+function d(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+function fmt(dt){var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return dt.getDate()+" "+m[dt.getMonth()]+" "+dt.getFullYear();}
+function iso2(dt){function p(n){return (n<10?"0":"")+n;}return dt.getFullYear()+"-"+p(dt.getMonth()+1)+"-"+p(dt.getDate());}
+function finish(a){return new Date(d(a.start).getTime()+(a.dur-1)*DAY);}
+function daysBetween(x,y){return Math.round((y-x)/DAY);}
+
+var SAMPLE_A=[
+ {id:"A1000",name:"Mobilisation & Site Establishment",start:"2026-01-05",dur:20,pct:100},
+ {id:"A1010",name:"Site Clearance & Earthworks — Zone 1",start:"2026-01-26",dur:45,pct:100},
+ {id:"A1020",name:"Storm Water Drainage Network",start:"2026-02-16",dur:60,pct:85},
+ {id:"A1030",name:"Potable Water & Irrigation Utilities",start:"2026-03-02",dur:55,pct:70},
+ {id:"A1040",name:"Electrical Substation Foundations",start:"2026-03-16",dur:40,pct:60},
+ {id:"A1050",name:"Bridge B1 — Piling Works",start:"2026-03-30",dur:35,pct:55},
+ {id:"A1060",name:"Bridge B1 — Substructure Concrete",start:"2026-05-04",dur:42,pct:30},
+ {id:"A1070",name:"Road Sub-base & Base Course — Zone 1",start:"2026-04-20",dur:38,pct:45},
+ {id:"A1080",name:"Transmission Line Tower Erection",start:"2026-05-18",dur:30,pct:10},
+ {id:"A1090",name:"Asphalt Wearing Course — Zone 1",start:"2026-05-25",dur:25,pct:0},
+ {id:"A1100",name:"Street Lighting Installation",start:"2026-06-08",dur:28,pct:0},
+ {id:"A1110",name:"Generator Farm Installation & Testing",start:"2026-06-22",dur:32,pct:0},
+ {id:"A1120",name:"Testing, Commissioning & Handover",start:"2026-07-20",dur:15,pct:0}
+];
+var SAMPLE_B=[
+ {id:"A1000",name:"Mobilisation & Site Establishment",start:"2026-01-05",dur:20,pct:100},
+ {id:"A1010",name:"Site Clearance & Earthworks — Zone 1",start:"2026-01-26",dur:52,pct:100},
+ {id:"A1020",name:"Storm Water Drainage Network",start:"2026-02-23",dur:60,pct:78},
+ {id:"A1030",name:"Potable Water & Irrigation Utilities",start:"2026-03-02",dur:55,pct:70},
+ {id:"A1040",name:"Electrical Substation Foundations",start:"2026-03-16",dur:46,pct:52},
+ {id:"A1050",name:"Bridge B1 — Piling Works",start:"2026-04-06",dur:35,pct:48},
+ {id:"A1060",name:"Bridge B1 — Substructure Concrete",start:"2026-05-11",dur:42,pct:22},
+ {id:"A1070",name:"Road Sub-base & Base Course — Zone 1",start:"2026-04-20",dur:38,pct:45},
+ {id:"A1080",name:"Transmission Line Tower Erection",start:"2026-05-18",dur:30,pct:10},
+ {id:"A1090",name:"Asphalt Wearing Course — Zone 1",start:"2026-06-01",dur:25,pct:0},
+ {id:"A1100",name:"Street Lighting & ITS Installation",start:"2026-06-08",dur:28,pct:0},
+ {id:"A1115",name:"Temporary Diversion Road — Phase 2",start:"2026-06-15",dur:18,pct:15},
+ {id:"A1120",name:"Testing, Commissioning & Handover",start:"2026-07-27",dur:15,pct:0}
+];
+var DATA_DATE="2026-06-30";
+
+var verA=[], verB=[], account=null;
+function clone(x){return JSON.parse(JSON.stringify(x));}
+function resetData(){verA=clone(SAMPLE_A); verB=clone(SAMPLE_B); renderAll();}
+
+/* ---------------- comparison engine ---------------- */
+function compare(){
+  var mapA={}, mapB={}, rows=[], ids=[];
+  verA.forEach(function(a){mapA[a.id]=a;});
+  verB.forEach(function(b){mapB[b.id]=b;});
+  verA.forEach(function(a){ids.push(a.id);});
+  verB.forEach(function(b){if(!mapA[b.id]) ids.push(b.id);});
+  ids.forEach(function(id){
+    var a=mapA[id], b=mapB[id], r={id:id,a:a,b:b};
+    if(a&&!b){r.status="deleted";}
+    else if(!a&&b){r.status="added";}
+    else{
+      var notes=[];
+      if(a.name!==b.name) notes.push("Renamed");
+      if(a.start!==b.start) notes.push("Start moved "+signed(daysBetween(d(a.start),d(b.start)))+"d");
+      if(a.dur!==b.dur) notes.push("Duration "+a.dur+"d → "+b.dur+"d");
+      if(a.pct!==b.pct) notes.push("Progress "+a.pct+"% → "+b.pct+"%");
+      r.notes=notes; r.status=notes.length?"changed":"same";
+      r.finVar=daysBetween(finish(a),finish(b));
+    }
+    rows.push(r);
+  });
+  return rows;
+}
+function signed(n){return (n>0?"+":"")+n;}
+function projFinish(list){var m=null;list.forEach(function(a){var f=finish(a);if(!m||f>m)m=f;});return m;}
+
+/* ---------------- landing mini gantt ---------------- */
+function renderMini(){
+  var rows=compare().slice(0,6);
+  var all=verA.concat(verB);
+  var min=null,max=null;
+  all.forEach(function(a){var s=d(a.start),f=finish(a);if(!min||s<min)min=s;if(!max||f>max)max=f;});
+  var span=max-min||1;
+  var html="";
+  rows.forEach(function(r){
+    html+='<div class="mini-row"><span class="nm">'+r.id+" · "+(r.b?r.b.name:r.a.name)+'</span><span class="mini-track">';
+    if(r.a) html+='<span class="mini-bar a" style="left:'+(daysBetween(min,d(r.a.start))/ (span/DAY) *100)+'%;width:'+(r.a.dur/(span/DAY)*100)+'%"></span>';
+    if(r.b){var cls=r.status==="added"?"b add":(r.status==="changed"?"b chg":"b");
+      html+='<span class="mini-bar '+cls+'" style="left:'+(daysBetween(min,d(r.b.start))/(span/DAY)*100)+'%;width:'+(r.b.dur/(span/DAY)*100)+'%"></span>';}
+    html+="</span></div>";
+  });
+  html+='<div class="mini-legend"><span><i style="background:#7d99ad"></i>Baseline</span><span><i style="background:var(--blue)"></i>Update</span><span><i style="background:#e08a1e"></i>Changed</span><span><i style="background:var(--ok)"></i>Added</span></div>';
+  document.getElementById("miniGantt").innerHTML=html;
+}
+
+/* ---------------- app rendering ---------------- */
+var cmpFilter="all";
+function renderStats(rows){
+  var c={changed:0,added:0,deleted:0,same:0};
+  rows.forEach(function(r){c[r.status==="added"?"added":r.status==="deleted"?"deleted":r.status==="changed"?"changed":"same"]++;});
+  var fv=daysBetween(projFinish(verA),projFinish(verB));
+  document.getElementById("statRow").innerHTML=
+    stat(rows.length,"Activities compared","")+
+    stat(c.changed,"Changed","c-chg")+
+    stat(c.added,"Added","c-add")+
+    stat(c.deleted,"Deleted","c-del")+
+    stat((fv>0?"+":"")+fv+" d","Project finish variance","c-var");
+  document.getElementById("metaA").innerHTML="<span>Activities: "+verA.length+"</span><span>Project finish: "+fmt(projFinish(verA))+"</span>";
+  document.getElementById("metaB").innerHTML="<span>Activities: "+verB.length+"</span><span>Project finish: "+fmt(projFinish(verB))+"</span><span>Data date: "+fmt(d(DATA_DATE))+"</span>";
+  function stat(n,l,cls){return '<div class="stat '+cls+'"><div class="n">'+n+'</div><div class="l">'+l+"</div></div>";}
+}
+function renderCompare(){
+  var rows=compare();
+  renderStats(rows);
+  var q=(document.getElementById("cmpSearch").value||"").toLowerCase();
+  var body=document.getElementById("cmpBody"), html="";
+  rows.forEach(function(r){
+    if(cmpFilter!=="all"&&r.status!==cmpFilter) return;
+    var nm=r.b?r.b.name:r.a.name;
+    if(q && (r.id+" "+nm).toLowerCase().indexOf(q)<0) return;
+    var stTxt={changed:"Changed",added:"Added",deleted:"Deleted",same:"Unchanged"}[r.status];
+    html+="<tr><td class='id'>"+r.id+"</td><td>"+esc(nm)+(r.notes&&r.notes.length?"<span class='diff-note'>"+r.notes.join(" · ")+"</span>":"")+"</td>"+
+      "<td><span class='st st-"+r.status+"'>"+stTxt+"</span></td>"+
+      "<td class='num'>"+(r.a?fmt(d(r.a.start)):"—")+" → "+(r.b?fmt(d(r.b.start)):"—")+"</td>"+
+      "<td class='num'>"+(r.a?fmt(finish(r.a)):"—")+" → "+(r.b?fmt(finish(r.b)):"—")+"</td>"+
+      "<td class='num'>"+(r.a?r.a.dur+"d":"—")+" → "+(r.b?r.b.dur+"d":"—")+"</td>"+
+      "<td class='num'>"+(r.a?r.a.pct+"%":"—")+" → "+(r.b?r.b.pct+"%":"—")+"</td>"+
+      "<td class='num'>"+(r.finVar===undefined?"—":("<span class='"+(r.finVar>0?"var-pos":r.finVar<0?"var-neg":"var-zero")+"'>"+signed(r.finVar)+"d</span>"))+"</td></tr>";
+  });
+  body.innerHTML=html||'<tr><td colspan="8"><div class="empty">No activities match this filter.</div></td></tr>';
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function renderGantt(){
+  var rows=compare();
+  var all=verA.concat(verB);
+  var min=null,max=null;
+  all.forEach(function(a){var s=d(a.start),f=finish(a);if(!min||s<min)min=s;if(!max||f>max)max=f;});
+  min=new Date(min.getFullYear(),min.getMonth(),1);
+  max=new Date(max.getFullYear(),max.getMonth()+1,0);
+  var totalDays=daysBetween(min,max)+1;
+  var months="", cur=new Date(min);
+  var mNames=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  while(cur<=max){
+    months+="<span style='left:"+(daysBetween(min,cur)/totalDays*100)+"%'>"+mNames[cur.getMonth()]+" "+cur.getFullYear()+"</span>";
+    cur=new Date(cur.getFullYear(),cur.getMonth()+1,1);
+  }
+  var dd=daysBetween(min,d(DATA_DATE))/totalDays*100;
+  var html='<div class="g-head"><span>Activity</span><span class="g-months">'+months+"</span></div>";
+  rows.forEach(function(r){
+    var nm=r.b?r.b.name:r.a.name;
+    html+='<div class="g-row"><div class="g-name">'+esc(nm)+"<small>"+r.id+"</small></div><div class='g-track'>";
+    if(dd>=0&&dd<=100) html+='<span class="today-line" style="left:'+dd+'%"></span>';
+    if(r.a) html+='<span class="g-bar a'+(r.status==="deleted"?" del":"")+'" style="left:'+(daysBetween(min,d(r.a.start))/totalDays*100)+'%;width:'+(r.a.dur/totalDays*100)+'%"></span>';
+    if(r.b){var cls=r.status==="added"?"b add":(r.status==="changed"?"b chg":"b");
+      html+='<span class="g-bar '+cls+'" style="left:'+(daysBetween(min,d(r.b.start))/totalDays*100)+'%;width:'+(r.b.dur/totalDays*100)+'%"></span>';}
+    html+="</div></div>";
+  });
+  document.getElementById("ganttInner").innerHTML=html;
+}
+function renderEditor(){
+  var body=document.getElementById("editBody"), html="";
+  verB.forEach(function(b,i){
+    html+="<tr><td><input data-i='"+i+"' data-k='id' value='"+esc(b.id)+"' /></td>"+
+      "<td><input data-i='"+i+"' data-k='name' value='"+esc(b.name)+"' /></td>"+
+      "<td><input data-i='"+i+"' data-k='start' type='date' value='"+b.start+"' /></td>"+
+      "<td><input data-i='"+i+"' data-k='dur' type='number' min='1' max='3650' value='"+b.dur+"' /></td>"+
+      "<td><input data-i='"+i+"' data-k='pct' type='number' min='0' max='100' value='"+b.pct+"' /></td>"+
+      "<td><button class='row-del' data-del='"+i+"' aria-label='Delete activity'>×</button></td></tr>";
+  });
+  body.innerHTML=html||'<tr><td colspan="6"><div class="empty">No activities in Version B. Add one below.</div></td></tr>';
+}
+function renderAll(){renderCompare();renderGantt();renderEditor();renderMini();}
+
+/* ---------------- auth ---------------- */
+var overlay=document.getElementById("authOverlay");
+var mode="signup";
+function setMode(m){
+  mode=m;
+  document.getElementById("tabSignup").classList.toggle("on",m==="signup");
+  document.getElementById("tabSignin").classList.toggle("on",m==="signin");
+  document.getElementById("fName").style.display=m==="signup"?"":"none";
+  document.getElementById("fConfirm").style.display=m==="signup"?"":"none";
+  document.getElementById("authTitle").textContent=m==="signup"?"Create your account":"Welcome back";
+  document.getElementById("authSub").textContent=m==="signup"?"Your workspace opens as soon as your account is created.":"Sign in to reopen your workspace.";
+  document.getElementById("authSubmit").textContent=m==="signup"?"Create Account & Open Workspace":"Sign In & Open Workspace";
+  document.getElementById("authSwitch").textContent=m==="signup"?"Already have an account? Use the Sign In tab above.":"New to MegaProjectPlanner? Use the Create Account tab above.";
+  showErr("");
+}
+function showErr(msg){var e=document.getElementById("authErr");e.textContent=msg;e.classList.toggle("show",!!msg);}
+function openAuth(m){setMode(m||"signup");overlay.classList.add("open");setTimeout(function(){document.getElementById(m==="signin"?"inEmail":"inName").focus();},60);}
+function closeAuth(){overlay.classList.remove("open");}
+function enterApp(){
+  closeAuth();
+  document.getElementById("landingView").style.display="none";
+  document.getElementById("appView").style.display="block";
+  document.getElementById("whoText").textContent=account.name+" · "+account.email;
+  document.getElementById("avatarInit").textContent=account.name.trim().charAt(0).toUpperCase()||"?";
+  window.scrollTo(0,0);
+  toast("Welcome, "+account.name.split(" ")[0]+" — your workspace is ready. Sample project M1-DES-2 Package F is loaded.");
+}
+document.getElementById("authForm").addEventListener("submit",function(ev){
+  ev.preventDefault();
+  if(!fbAuth){ showErr("Could not reach the account server — check your connection and try again."); return; }
+  var name=document.getElementById("inName").value.trim();
+  var email=document.getElementById("inEmail").value.trim();
+  var pass=document.getElementById("inPass").value;
+  var conf=document.getElementById("inConfirm").value;
+  var submitBtn=document.getElementById("authSubmit");
+  submitBtn.disabled=true;
+  function done(){ submitBtn.disabled=false; }
+  if(mode==="signup"){
+    if(name.length<2){ done(); return showErr("Please enter your full name."); }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ done(); return showErr("Please enter a valid email address."); }
+    if(pass.length<6){ done(); return showErr("Your password needs at least 6 characters."); }
+    if(pass!==conf){ done(); return showErr("The two passwords do not match."); }
+    fbAuth.createUserWithEmailAndPassword(email,pass).then(function(cred){
+      var u=cred.user;
+      return u.updateProfile({displayName:name}).then(function(){ return saveProfile(u,name); }).then(function(){ return u; });
+    }).then(function(u){
+      account={name:name,email:u.email,uid:u.uid};
+      done(); enterApp();
+    }).catch(function(err){ done(); showErr(fbErr(err)); });
+  }else{
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ done(); return showErr("Please enter a valid email address."); }
+    if(pass.length<6){ done(); return showErr("Please enter your password."); }
+    fbAuth.signInWithEmailAndPassword(email,pass).then(function(cred){
+      var u=cred.user;
+      account={name:u.displayName||u.email.split("@")[0],email:u.email,uid:u.uid};
+      return loadWork(u);
+    }).then(function(){ done(); enterApp(); }).catch(function(err){ done(); showErr(fbErr(err)); });
+  }
+});
+document.getElementById("googleBtn").addEventListener("click",function(){
+  if(!fbAuth){ showErr("Could not reach the account server — check your connection and try again."); return; }
+  var provider=new firebase.auth.GoogleAuthProvider();
+  fbAuth.signInWithPopup(provider).then(function(res){
+    var u=res.user;
+    var nm=u.displayName||u.email.split("@")[0];
+    account={name:nm,email:u.email,uid:u.uid};
+    return saveProfile(u,nm).then(function(){ return loadWork(u); });
+  }).then(function(){ enterApp(); }).catch(function(err){ showErr(fbErr(err)); });
+});
+if(fbAuth){
+  fbAuth.onAuthStateChanged(function(user){
+    if(user){
+      account={name:user.displayName||user.email.split("@")[0],email:user.email,uid:user.uid};
+      loadWork(user).then(function(){
+        if(document.getElementById("appView").style.display!=="block") enterApp();
+      });
+    }
+  });
+}
+document.querySelectorAll("[data-auth]").forEach(function(el){
+  el.addEventListener("click",function(ev){ev.preventDefault();openAuth(el.getAttribute("data-auth"));});
+});
+document.getElementById("tabSignup").addEventListener("click",function(){setMode("signup");});
+document.getElementById("tabSignin").addEventListener("click",function(){setMode("signin");});
+document.getElementById("authClose").addEventListener("click",closeAuth);
+overlay.addEventListener("click",function(ev){if(ev.target===overlay)closeAuth();});
+document.addEventListener("keydown",function(ev){if(ev.key==="Escape")closeAuth();});
+document.getElementById("signOutBtn").addEventListener("click",function(){
+  function showLanding(){
+    document.getElementById("appView").style.display="none";
+    document.getElementById("landingView").style.display="block";
+    window.scrollTo(0,0);
+    toast("Signed out. Sign in any time to reopen your workspace.");
+  }
+  if(fbAuth){ fbAuth.signOut().then(showLanding).catch(showLanding); }
+  else showLanding();
+});
+document.getElementById("appBrand").addEventListener("click",function(ev){ev.preventDefault();window.scrollTo(0,0);});
+document.getElementById("burger").addEventListener("click",function(){document.getElementById("siteHeader").classList.toggle("open");});
+
+/* ---------------- app interactions ---------------- */
+document.querySelectorAll(".apptabs button").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    document.querySelectorAll(".apptabs button").forEach(function(b){b.classList.remove("on");});
+    btn.classList.add("on");
+    ["compare","gantt","editor"].forEach(function(t){
+      document.getElementById("tab-"+t).style.display=t===btn.getAttribute("data-tab")?"":"none";
+    });
+  });
+});
+document.querySelectorAll("#cmpFilters .chip-btn").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    document.querySelectorAll("#cmpFilters .chip-btn").forEach(function(b){b.classList.remove("on");});
+    btn.classList.add("on"); cmpFilter=btn.getAttribute("data-f"); renderCompare();
+  });
+});
+document.getElementById("cmpSearch").addEventListener("input",renderCompare);
+document.getElementById("editBody").addEventListener("input",function(ev){
+  var t=ev.target; if(!t.getAttribute("data-i"))return;
+  var i=+t.getAttribute("data-i"), k=t.getAttribute("data-k");
+  if(k==="dur") verB[i].dur=Math.max(1,parseInt(t.value,10)||1);
+  else if(k==="pct") verB[i].pct=Math.min(100,Math.max(0,parseInt(t.value,10)||0));
+  else if(k==="start"){ if(/^\d{4}-\d{2}-\d{2}$/.test(t.value)) verB[i].start=t.value; }
+  else verB[i][k]=t.value;
+  renderCompare(); renderGantt(); saveWorkSoon();
+});
+document.getElementById("editBody").addEventListener("click",function(ev){
+  var del=ev.target.getAttribute("data-del");
+  if(del===null||del===undefined) return;
+  verB.splice(+del,1); renderAll(); saveWorkSoon();
+  toast("Activity removed from Version B — it now shows as Deleted in the comparison.");
+});
+document.getElementById("addActBtn").addEventListener("click",function(){
+  var n=verB.length+1, id="A"+(1200+n*10);
+  verB.push({id:id,name:"New Activity — describe the scope",start:"2026-07-01",dur:14,pct:0});
+  renderAll(); saveWorkSoon();
+  toast("Activity "+id+" added to Version B — it shows as Added in the comparison.");
+});
+function doReset(){resetData();saveWorkSoon();toast("Sample data restored — Baseline Rev 0 against Update Rev 4.");}
+document.getElementById("resetBtn").addEventListener("click",doReset);
+document.getElementById("resetBtn2").addEventListener("click",doReset);
+document.getElementById("csvBtn").addEventListener("click",function(){
+  var rows=compare();
+  var lines=["Activity ID,Activity Name,Status,Start A,Finish A,Start B,Finish B,Duration A (d),Duration B (d),% Complete A,% Complete B,Finish Variance (d),Notes"];
+  rows.forEach(function(r){
+    function q(v){v=(v===undefined||v===null)?"":String(v);return '"'+v.replace(/"/g,'""')+'"';}
+    lines.push([q(r.id),q(r.b?r.b.name:r.a.name),q(r.status),
+      q(r.a?iso2(d(r.a.start)):""),q(r.a?iso2(finish(r.a)):""),q(r.b?iso2(d(r.b.start)):""),q(r.b?iso2(finish(r.b)):""),
+      q(r.a?r.a.dur:""),q(r.b?r.b.dur:""),q(r.a?r.a.pct:""),q(r.b?r.b.pct:""),
+      q(r.finVar===undefined?"":r.finVar),q(r.notes?r.notes.join("; "):"")].join(","));
+  });
+  var blob=new Blob([lines.join("\n")],{type:"text/csv"});
+  var aEl=document.createElement("a");
+  aEl.href=URL.createObjectURL(blob);
+  aEl.download="M1-DES-2_PackageF_Compare_Report.csv";
+  document.body.appendChild(aEl); aEl.click(); document.body.removeChild(aEl);
+  setTimeout(function(){URL.revokeObjectURL(aEl.href);},2000);
+  toast("Change report downloaded.");
+});
+
+/* ---------------- toast ---------------- */
+var toastTimer=null;
+function toast(msg){
+  var t=document.getElementById("toast");
+  t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove("show");},4200);
+}
+
+resetData();
+})();
+</script>
+</body>
+</html>
