@@ -1,37 +1,25 @@
-<!DOCTYPE HTML>
-<!--
-	Forty by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>MegaProjectPlanner — From BOQ to a Validated Baseline</title>
-		<meta name="description" content="MegaProjectPlanner — from raw BOQ to a validated baseline for Primavera P6 programmes, plus Compare Projects. Free planning tools for planning engineers and project controls teams." />
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>MegaProjectPlanner — From BOQ to a Validated Baseline</title>
+<meta name="description" content="MegaProjectPlanner — from raw BOQ to a validated baseline for Primavera P6 programmes, plus Compare Projects. Free planning tools for planning engineers and project controls teams." />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-		<style>
+<style>
   :root{
     --navy:#07273f; --navy-2:#0a3355; --ink:#12222f; --body:#43586a; --muted:#6b7f90;
     --blue:#1283c6; --blue-dark:#0d6ca6; --blue-soft:#e8f3fa;
-    --bg:#ffffff; --bg-alt:#f2f4f5; --line:#dfe6ea; --card:#ffffff;
+    --bg:#fffdfb; --bg-alt:#f7f5f1; --line:#e2ddd3; --card:#ffffff;
     --ok:#1d8a4e; --ok-bg:#e5f4ec; --warn:#b45309; --warn-bg:#fdf0dd;
     --bad:#c22f2f; --bad-bg:#fbe7e7; --chg:#0d6ca6; --chg-bg:#e3f0f9;
-    --head-font:"Archivo",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --head-font:"Playfair Display",Georgia,"Times New Roman",serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
     --shadow:0 18px 50px rgba(7,39,63,.16);
-  }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --ink:#e8f0f5; --body:#b3c4d1; --muted:#8ba1b1;
-      --bg:#0b1a26; --bg-alt:#0e2233; --line:#1e3a4e; --card:#10293d;
-      --blue-soft:#123650; --ok-bg:#12382a; --warn-bg:#3d2c10; --bad-bg:#3d1a1a; --chg-bg:#123650;
-      --shadow:0 18px 50px rgba(0,0,0,.5);
-    }
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -182,164 +170,165 @@
   @media (max-width:820px){.ver-grid{grid-template-columns:1fr}}
   @media (max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
   @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.toast{transition:none}}
-  /* ---------- Forty merge overrides ---------- */
-  #appView{background:var(--bg-alt);min-height:100vh}
-  #landingView .lead{color:rgba(255,255,255,.8)}
-  #landingView details.faq-item p{color:rgba(255,255,255,.8)}
-  #landingView details.faq-item summary{color:#fff}
-  #landingView details.faq-item{border-color:rgba(255,255,255,.15)}
-  .overlay{z-index:10003}
-  .toast{z-index:10004}
-		</style>
-	</head>
-	<body class="is-preload">
 
-		<!-- Wrapper -->
-			<div id="wrapper">
-				<div id="landingView">
+  /* ---------- Classic landing ---------- */
+  body{margin:0;font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+  h1,h2,h3{font-family:var(--head-font);color:var(--navy);line-height:1.15;margin:0 0 14px}
+  a{color:var(--blue)}
+  img{max-width:100%;display:block}
+  .topbar{position:sticky;top:0;z-index:60;background:rgba(255,253,251,.97);border-bottom:1px solid var(--line)}
+  .topbar-in{display:flex;align-items:center;gap:28px;min-height:64px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy)}
+  .brand-mark{width:28px;height:28px;flex:none}
+  .brand-name{font-family:var(--head-font);font-weight:700;font-size:1.25rem}
+  .brand-dom{color:var(--muted);font-size:.8rem}
+  .topnav{margin-left:auto;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+  .topnav a{text-decoration:none;color:var(--ink);font-weight:600;font-size:.92rem}
+  .topnav a:hover{color:var(--blue)}
+  .btn-navy{background:var(--navy);color:#fff}
+  .btn-navy:hover{background:var(--navy-2)}
+  .hero{padding:88px 0 0}
+  .hero h1{font-size:clamp(2.5rem,5.2vw,4rem);font-weight:700;margin:0 0 20px}
+  .hero .lead{font-size:1.2rem}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin:30px 0 44px}
+  .hero-fig{margin:0}
+  .hero-fig img{width:100%;height:auto;border:1px solid var(--line)}
+  .hero-fig figcaption{color:var(--muted);font-size:.85rem;padding:10px 2px 0}
+  .tiles-sec{padding:76px 0 8px}
+  .tiles4{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .tile{border:1px solid var(--line);background:var(--card)}
+  .tile img{width:100%;aspect-ratio:4/3;object-fit:cover}
+  .tile h3{font-size:1.15rem;padding:18px 20px 0;margin-bottom:6px}
+  .tile h3 a{color:var(--navy);text-decoration:none}
+  .tile h3 a:hover{color:var(--blue)}
+  .tile p{color:var(--body);font-size:.94rem;padding:0 20px 20px;margin:0}
+  .intro{padding:76px 0}
+  .intro h2,.work-sec h2,.faq-sec h2{font-size:clamp(1.7rem,3.2vw,2.4rem)}
+  .spot-sec{padding:20px 0 76px}
+  .spot{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:44px 0;border-top:1px solid var(--line)}
+  .spot.rev .spot-img{order:2}
+  .spot-img img{width:100%;border:1px solid var(--line)}
+  .spot-txt h3{font-size:1.6rem}
+  .spot-txt p{color:var(--body)}
+  .work-sec{padding:76px 0;background:var(--bg-alt);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .faq-sec{padding:76px 0}
+  .cta-band{padding:84px 0}
+  .cta-band h2{font-family:var(--head-font);color:#fff}
+  .site-footer{border-top:1px solid var(--line);padding:36px 0;background:var(--bg-alt)}
+  .foot-in{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+  .foot-brand{font-family:var(--head-font);font-weight:700;color:var(--navy);font-size:1.1rem;margin:0 0 6px}
+  .foot-note{color:var(--muted);font-size:.88rem;margin:0}
+  .foot-links{display:flex;gap:22px}
+  .foot-links a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.92rem}
+  .foot-links a:hover{color:var(--blue)}
+  @media (max-width:900px){.tiles4{grid-template-columns:repeat(2,1fr)}.spot{grid-template-columns:1fr;gap:26px}.spot.rev .spot-img{order:0}.topbar-in{flex-wrap:wrap;padding-top:10px;padding-bottom:10px}.topnav{gap:16px}}
+  @media (max-width:560px){.tiles4{grid-template-columns:1fr}.hero{padding-top:56px}}
+</style>
+</head>
+<body>
+<div id="landingView">
+  <header class="topbar">
+    <div class="wrap topbar-in">
+      <a href="index.html" class="brand">
+        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#1283c6"/><circle cx="20" cy="20" r="12.5" fill="#5db9ec"/><circle cx="20" cy="20" r="7" fill="#fff"/></svg>
+        <span class="brand-name">MegaProjectPlanner</span>
+        <span class="brand-dom">megaprojectplanner.us.ci</span>
+      </a>
+      <nav class="topnav">
+        <a data-open-app href="app.html">The App</a>
+        <a href="compare.html">Compare</a>
+        <a href="#workflow">How It Works</a>
+        <a href="#faq">FAQ</a>
+        <a href="#" data-auth="signin">Sign In</a>
+        <a href="#" data-auth="signup" class="btn btn-navy btn-sm">Create Free Account</a>
+      </nav>
+    </div>
+  </header>
 
-				<!-- Header -->
-					<header id="header" class="alt">
-						<a href="index.html" class="logo"><strong>MegaProjectPlanner</strong> <span>megaprojectplanner.us.ci</span></a>
-						<nav>
-							<a href="#menu">Menu</a>
-						</nav>
-					</header>
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker">Primavera P6 &middot; BOQ to Baseline</p>
+      <h1>From Raw BOQ<br>to a Validated Baseline</h1>
+      <p class="lead">MegaProjectPlanner is a free planning tool for Primavera P6 programmes. Map your BOQ, build the WBS, load cost and resources, set the logic and run the CPM schedule — then health-check the programme and export a checked baseline.</p>
+      <p class="hero-cta">
+        <a data-open-app href="app.html" class="btn btn-navy">Open MegaProjectPlanner App</a>
+        <a href="#" data-auth="signup" class="btn btn-outline">Create Free Account</a>
+      </p>
+      <figure class="hero-fig">
+        <img src="images/bridge-sunrise.jpg" alt="Bridge under construction at sunrise">
+        <figcaption>Bridge construction — the kind of programme MegaProjectPlanner is built for.</figcaption>
+      </figure>
+    </div>
+  </section>
 
-				<!-- Menu -->
-					<nav id="menu">
-						<ul class="links">
-							<li><a href="index.html">Home</a></li>
-							<li><a href="app.html">MegaProjectPlanner App</a></li>
-							<li><a href="compare.html">Compare Projects</a></li>
-							<li><a href="#workflow">What the App Does</a></li>
-							<li><a href="#faq">FAQ</a></li>
-						</ul>
-						<ul class="actions stacked">
-							<li><a href="#" data-auth="signup" class="button primary fit">Create Free Account</a></li>
-							<li><a href="#" data-auth="signin" class="button fit">Sign In</a></li>
-						</ul>
-					</nav>
+  <section class="tiles-sec">
+    <div class="wrap">
+      <div class="tiles4">
+        <article class="tile">
+          <a data-open-app href="app.html"><img src="images/bridge-aerial.jpg" alt="Bridge under construction"></a>
+          <h3><a data-open-app href="app.html">MegaProjectPlanner App</a></h3>
+          <p>Build a checked baseline from your BOQ</p>
+        </article>
+        <article class="tile">
+          <a href="compare.html"><img src="images/highway-aerial.jpg" alt="Highway construction from above"></a>
+          <h3><a href="compare.html">Compare Projects</a></h3>
+          <p>See what changed between two versions of your plan</p>
+        </article>
+        <article class="tile">
+          <a href="#workflow"><img src="images/flyover.jpg" alt="Concrete flyover"></a>
+          <h3><a href="#workflow">What the App Does</a></h3>
+          <p>BOQ to baseline in one workflow</p>
+        </article>
+        <article class="tile">
+          <a href="#" data-auth="signup"><img src="images/pic07.jpg" alt="City buildings"></a>
+          <h3><a href="#" data-auth="signup">Create Free Account</a></h3>
+          <p>Save your comparisons in the cloud</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
-				<!-- Banner -->
-					<section id="banner" class="major">
-						<div class="inner">
-							<header class="major">
-								<h1>From Raw BOQ<br />to a Validated Baseline</h1>
-							</header>
-							<div class="content">
-								<p>MegaProjectPlanner is a free planning tool for Primavera P6 programmes. Map your BOQ, build the WBS, load cost and resources, set the logic and run the CPM schedule — then health-check the programme and export a checked baseline.</p>
-								<ul class="actions">
-									<li><a data-open-app href="app.html" class="button next">Open MegaProjectPlanner App</a></li>
-									<li><a href="#" data-auth="signup" class="button">Create Free Account</a></li>
-								</ul>
-							</div>
-						</div>
-					</section>
+  <section id="two" class="intro">
+    <div class="wrap">
+      <p class="kicker">One Workflow</p>
+      <h2>One Workflow, From BOQ to a Checked Baseline</h2>
+      <p class="lead">MegaProjectPlanner takes a raw BOQ and walks it through every step a planning engineer does by hand — mapped, structured, loaded, scheduled and checked — until the baseline is ready to issue.</p>
+      <p><a data-open-app href="app.html" class="btn btn-navy">Open the App</a></p>
+    </div>
+  </section>
 
-				<!-- Main -->
-					<div id="main">
+  <section id="app" class="spot-sec">
+    <div class="wrap">
+      <div class="spot">
+        <a data-open-app href="app.html" class="spot-img"><img src="images/flyover.jpg" alt="Concrete flyover"></a>
+        <div class="spot-txt">
+          <p class="kicker">The App</p>
+          <h3>MegaProjectPlanner App</h3>
+          <p>Map the BOQ, build the WBS, load cost and resources, set the logic and run the CPM schedule. Health-check the programme, update progress, and export Reports &amp; XER for Primavera P6 — all in your browser, with your data staying on your computer.</p>
+          <p><a data-open-app href="app.html" class="btn btn-outline">Open the App</a></p>
+        </div>
+      </div>
+      <div class="spot rev">
+        <a href="compare.html" class="spot-img"><img src="images/highway-aerial.jpg" alt="Highway construction from above"></a>
+        <div class="spot-txt">
+          <p class="kicker">Compare</p>
+          <h3>Compare Projects</h3>
+          <p>Load two versions of the same project and read the difference: start and finish shifts, duration and progress changes, added and deleted activities — on an interactive Gantt and in a line-by-line table.</p>
+          <div class="preview">
+            <div class="pbar"><span class="dot" style="background:#e0655f"></span><span class="dot" style="background:#e8b13f"></span><span class="dot" style="background:#57b06a"></span><span>M1-DES-2 · Package F — Baseline vs Update</span></div>
+            <div class="pbody" id="miniGantt"></div>
+          </div>
+          <p><a href="#" data-auth="signup" class="btn btn-outline">Try It Free</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-						<!-- One -->
-							<section id="one" class="tiles">
-								<article>
-									<span class="image">
-										<img src="images/bridge-aerial.jpg" alt="Bridge under construction" />
-									</span>
-									<header class="major">
-										<h3><a data-open-app href="app.html" class="link">MegaProjectPlanner App</a></h3>
-										<p>Build a checked baseline from your BOQ</p>
-									</header>
-								</article>
-								<article>
-									<span class="image">
-										<img src="images/highway-aerial.jpg" alt="Highway construction from above" />
-									</span>
-									<header class="major">
-										<h3><a href="compare.html" class="link">Compare Projects</a></h3>
-										<p>See what changed between two versions of your plan</p>
-									</header>
-								</article>
-								<article>
-									<span class="image">
-										<img src="images/flyover.jpg" alt="Concrete flyover" />
-									</span>
-									<header class="major">
-										<h3><a href="#workflow" class="link">What the App Does</a></h3>
-										<p>BOQ to baseline in one workflow</p>
-									</header>
-								</article>
-								<article>
-									<span class="image">
-										<img src="images/pic07.jpg" alt="City buildings" />
-									</span>
-									<header class="major">
-										<h3><a href="#" data-auth="signup" class="link">Create Free Account</a></h3>
-										<p>Save your comparisons in the cloud</p>
-									</header>
-								</article>
-							</section>
-
-						<!-- Two -->
-							<section id="two">
-								<div class="inner">
-									<header class="major">
-										<h2>One Workflow, From BOQ to a Checked Baseline</h2>
-									</header>
-									<p>MegaProjectPlanner takes a raw BOQ and walks it through every step a planning engineer does by hand — mapped, structured, loaded, scheduled and checked — until the baseline is ready to issue.</p>
-									<ul class="actions">
-										<li><a data-open-app href="app.html" class="button next">Open the App</a></li>
-									</ul>
-								</div>
-							</section>
-
-						<!-- Spotlights -->
-							<section id="app" class="spotlights">
-								<section>
-									<a data-open-app href="app.html" class="image">
-										<img src="images/flyover.jpg" alt="Concrete flyover" data-position="center center" />
-									</a>
-									<div class="content">
-										<div class="inner">
-											<header class="major">
-												<h3>MegaProjectPlanner App</h3>
-											</header>
-											<p>Map the BOQ, build the WBS, load cost and resources, set the logic and run the CPM schedule. Health-check the programme, update progress, and export Reports &amp; XER for Primavera P6 — all in your browser, with your data staying on your computer.</p>
-											<ul class="actions">
-												<li><a data-open-app href="app.html" class="button">Open the App</a></li>
-											</ul>
-										</div>
-									</div>
-								</section>
-								<section>
-									<a href="compare.html" class="image">
-										<img src="images/highway-aerial.jpg" alt="Highway construction from above" data-position="top center" />
-									</a>
-									<div class="content">
-										<div class="inner">
-											<header class="major">
-												<h3>Compare Projects</h3>
-											</header>
-											<p>Load two versions of the same project and read the difference: start and finish shifts, duration and progress changes, added and deleted activities — on an interactive Gantt and in a line-by-line table.</p>
-											<div class="preview">
-												<div class="pbar"><span class="dot" style="background:#e0655f"></span><span class="dot" style="background:#e8b13f"></span><span class="dot" style="background:#57b06a"></span><span>M1-DES-2 · Package F — Baseline vs Update</span></div>
-												<div class="pbody" id="miniGantt"></div>
-											</div>
-											<ul class="actions">
-												<li><a href="#" data-auth="signup" class="button">Try It Free</a></li>
-											</ul>
-										</div>
-									</div>
-								</section>
-							</section>
-
-						<!-- Workflow -->
-							<section id="workflow">
-								<div class="inner">
-									<header class="major">
-										<h2>What MegaProjectPlanner Does</h2>
-									</header>
-									<p class="lead">Every step of the baseline workflow, in the order a planning engineer does it.</p>
+  <section id="workflow" class="work-sec">
+    <div class="wrap">
+      <p class="kicker">What It Does</p>
+      <h2>What MegaProjectPlanner Does</h2>
+      <p class="lead">Every step of the baseline workflow, in the order a planning engineer does it.</p>
 <div class="cards">
         <div>
           <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
@@ -372,17 +361,15 @@
           <p>Update progress against the baseline and export Reports &amp; XER, ready to open in Primavera P6.</p>
         </div>
       </div>
-      									<p style="margin-top:26px"><a class="btn btn-blue" data-open-app href="app.html" style="text-decoration:none">Open the App →</a></p>
-									<p style="color:rgba(255,255,255,.65);margin-top:12px">No account needed for the app — it runs in your browser and your data stays on your computer.</p>
-								</div>
-							</section>
+      <p style="margin-top:26px"><a class="btn btn-blue" data-open-app href="app.html" style="text-decoration:none">Open the App &rarr;</a></p>
+      <p style="color:var(--muted);margin-top:12px">A free account opens the app. Your project data stays on your computer — the app runs in your browser and nothing is uploaded.</p>
+    </div>
+  </section>
 
-						<!-- FAQ -->
-							<section id="faq">
-								<div class="inner">
-									<header class="major">
-										<h2>Frequently Asked Questions</h2>
-									</header>
+  <section id="faq" class="faq-sec">
+    <div class="wrap">
+      <p class="kicker">Questions</p>
+      <h2>Frequently Asked Questions</h2>
 <div class="faq">
         <details class="faq-item" open>
           <summary>What is MegaProjectPlanner?</summary>
@@ -390,7 +377,7 @@
         </details>
         <details class="faq-item">
           <summary>Do I need an account to use the app?</summary>
-          <p>No. The app runs in your browser and keeps your data on your own computer — nothing is uploaded. The free account is for Compare Projects, where your comparisons and edits are saved in your workspace.</p>
+          <p>Yes — a free account opens the app. Create one with your email or with Google, and the app opens for you. Your project data still stays on your own computer — the app runs in your browser and nothing is uploaded. The same free account also opens Compare Projects, where your comparisons and edits are saved in your workspace.</p>
         </details>
         <details class="faq-item">
           <summary>Which projects can I compare?</summary>
@@ -413,35 +400,32 @@
           <p>Yes — the Compare view exports a CSV change report with every activity, its status and its variance, ready to attach to a progress report or an extension-of-time submission.</p>
         </details>
       </div>
-								</div>
-							</section>
+    </div>
+  </section>
 
-						<!-- CTA -->
-							<section id="cta" class="cta-band">
-								<div class="inner">
-									<h2>Build Your Baseline — Then Watch What Changes</h2>
-									<p>Open the free app to build a checked baseline from your BOQ, or create a free account to compare two versions of a plan — the workspace opens with a sample megaproject already loaded.</p>
-									<a class="btn btn-white" data-open-app href="app.html" style="text-decoration:none">Open MegaProjectPlanner App →</a>
-									<button class="btn btn-line-w" data-auth="signup" style="margin-left:10px">Create Free Account →</button>
-								</div>
-							</section>
+  <section id="cta" class="cta-band">
+    <div class="wrap">
+      <h2>Build Your Baseline — Then Watch What Changes</h2>
+      <p>Open the free app to build a checked baseline from your BOQ, or create a free account to compare two versions of a plan — the workspace opens with a sample megaproject already loaded.</p>
+      <p><a class="btn btn-white" data-open-app href="app.html" style="text-decoration:none">Open MegaProjectPlanner App &rarr;</a>
+      <button class="btn btn-line-w" data-auth="signup" style="margin-left:10px">Create Free Account &rarr;</button></p>
+    </div>
+  </section>
 
-					</div>
+  <footer class="site-footer">
+    <div class="wrap foot-in">
+      <div>
+        <p class="foot-brand">MegaProjectPlanner</p>
+        <p class="foot-note">&copy; 2026 MegaProjectPlanner &middot; megaprojectplanner.us.ci</p>
+      </div>
+      <div class="foot-links">
+        <a href="https://github.com/NoumanQamar">GitHub</a>
+        <a href="https://www.linkedin.com/in/mnq860/">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+</div>
 
-				<!-- Footer -->
-					<footer id="footer">
-						<div class="inner">
-							<ul class="icons">
-								<li><a href="https://github.com/NoumanQamar" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
-								<li><a href="https://www.linkedin.com/in/mnq860/" class="icon brands alt fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
-							</ul>
-							<ul class="copyright">
-								<li>&copy; 2026 MegaProjectPlanner · megaprojectplanner.us.ci</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li>
-							</ul>
-						</div>
-					</footer>
-
-				</div><!-- /landingView -->
 <!-- ======================= AUTH MODAL ======================= -->
 <div class="overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
   <div class="modal">
@@ -589,17 +573,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-
-			</div><!-- /wrapper -->
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
 <script>
 (function(){
 "use strict";
@@ -1002,6 +975,5 @@ window.addEventListener("load",function(){
 });
 })();
 </script>
-
-	</body>
+</body>
 </html>
