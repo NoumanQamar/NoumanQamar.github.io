@@ -230,7 +230,7 @@
 							<div class="content">
 								<p>MegaProjectPlanner is a free planning tool for Primavera P6 programmes. Map your BOQ, build the WBS, load cost and resources, set the logic and run the CPM schedule — then health-check the programme and export a checked baseline.</p>
 								<ul class="actions">
-									<li><a href="app.html" class="button next">Open MegaProjectPlanner App</a></li>
+									<li><a data-open-app href="app.html" class="button next">Open MegaProjectPlanner App</a></li>
 									<li><a href="#" data-auth="signup" class="button">Create Free Account</a></li>
 								</ul>
 							</div>
@@ -247,7 +247,7 @@
 										<img src="images/bridge-aerial.jpg" alt="Bridge under construction" />
 									</span>
 									<header class="major">
-										<h3><a href="app.html" class="link">MegaProjectPlanner App</a></h3>
+										<h3><a data-open-app href="app.html" class="link">MegaProjectPlanner App</a></h3>
 										<p>Build a checked baseline from your BOQ</p>
 									</header>
 								</article>
@@ -288,7 +288,7 @@
 									</header>
 									<p>MegaProjectPlanner takes a raw BOQ and walks it through every step a planning engineer does by hand — mapped, structured, loaded, scheduled and checked — until the baseline is ready to issue.</p>
 									<ul class="actions">
-										<li><a href="app.html" class="button next">Open the App</a></li>
+										<li><a data-open-app href="app.html" class="button next">Open the App</a></li>
 									</ul>
 								</div>
 							</section>
@@ -296,7 +296,7 @@
 						<!-- Spotlights -->
 							<section id="app" class="spotlights">
 								<section>
-									<a href="app.html" class="image">
+									<a data-open-app href="app.html" class="image">
 										<img src="images/flyover.jpg" alt="Concrete flyover" data-position="center center" />
 									</a>
 									<div class="content">
@@ -306,7 +306,7 @@
 											</header>
 											<p>Map the BOQ, build the WBS, load cost and resources, set the logic and run the CPM schedule. Health-check the programme, update progress, and export Reports &amp; XER for Primavera P6 — all in your browser, with your data staying on your computer.</p>
 											<ul class="actions">
-												<li><a href="app.html" class="button">Open the App</a></li>
+												<li><a data-open-app href="app.html" class="button">Open the App</a></li>
 											</ul>
 										</div>
 									</div>
@@ -372,7 +372,7 @@
           <p>Update progress against the baseline and export Reports &amp; XER, ready to open in Primavera P6.</p>
         </div>
       </div>
-      									<p style="margin-top:26px"><a class="btn btn-blue" href="app.html" style="text-decoration:none">Open the App →</a></p>
+      									<p style="margin-top:26px"><a class="btn btn-blue" data-open-app href="app.html" style="text-decoration:none">Open the App →</a></p>
 									<p style="color:rgba(255,255,255,.65);margin-top:12px">No account needed for the app — it runs in your browser and your data stays on your computer.</p>
 								</div>
 							</section>
@@ -421,7 +421,7 @@
 								<div class="inner">
 									<h2>Build Your Baseline — Then Watch What Changes</h2>
 									<p>Open the free app to build a checked baseline from your BOQ, or create a free account to compare two versions of a plan — the workspace opens with a sample megaproject already loaded.</p>
-									<a class="btn btn-white" href="app.html" style="text-decoration:none">Open MegaProjectPlanner App →</a>
+									<a class="btn btn-white" data-open-app href="app.html" style="text-decoration:none">Open MegaProjectPlanner App →</a>
 									<button class="btn btn-line-w" data-auth="signup" style="margin-left:10px">Create Free Account →</button>
 								</div>
 							</section>
@@ -491,7 +491,7 @@
       <div class="who">
         <span class="avatar" id="avatarInit">?</span>
         <span id="whoText">Signed in</span>
-        <a class="btn btn-line-w btn-sm" href="app.html" target="_blank" rel="noopener" style="text-decoration:none">MegaProjectPlanner App</a>
+        <a class="btn btn-line-w btn-sm" data-open-app href="app.html" target="_blank" rel="noopener" style="text-decoration:none">MegaProjectPlanner App</a>
         <button class="btn btn-line-w btn-sm" id="signOutBtn">Sign Out</button>
       </div>
     </div>
@@ -900,6 +900,12 @@ if(fbAuth){
 document.querySelectorAll("[data-auth]").forEach(function(el){
   el.addEventListener("click",function(ev){ev.preventDefault();openAuth(el.getAttribute("data-auth"));});
 });
+document.querySelectorAll("[data-open-app]").forEach(function(el){
+  el.addEventListener("click",function(ev){
+    var signedIn=(fbAuth&&fbAuth.currentUser)||account;
+    if(!signedIn){ ev.preventDefault(); openAuth("signup"); }
+  });
+});
 document.getElementById("tabSignup").addEventListener("click",function(){setMode("signup");});
 document.getElementById("tabSignin").addEventListener("click",function(){setMode("signin");});
 document.getElementById("authClose").addEventListener("click",closeAuth);
@@ -907,6 +913,7 @@ overlay.addEventListener("click",function(ev){if(ev.target===overlay)closeAuth()
 document.addEventListener("keydown",function(ev){if(ev.key==="Escape")closeAuth();});
 document.getElementById("signOutBtn").addEventListener("click",function(){
   function showLanding(){
+    account=null;
     document.getElementById("appView").style.display="none";
     document.getElementById("landingView").style.display="block";
     window.scrollTo(0,0);
