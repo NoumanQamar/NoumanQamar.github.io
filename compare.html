@@ -270,6 +270,8 @@
     </a>
     <button class="burger" id="burger" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
     <nav class="links">
+      <a href="app.html">MegaProjectPlanner App</a>
+      <a href="compare.html">Compare Projects</a>
       <a href="#idea">The Idea</a>
       <a href="#features">Features</a>
       <a href="#how">How It Works</a>
@@ -295,6 +297,7 @@
         <div class="cta-row">
           <button class="btn btn-blue" data-auth="signup">Create Free Account →</button>
           <button class="btn btn-line-w" data-auth="signin">Sign In</button>
+          <a class="btn btn-line-w" href="app.html" style="text-decoration:none">Open MegaProjectPlanner App →</a>
         </div>
       </div>
       <div class="howbox">
@@ -499,6 +502,7 @@
         <ul>
           <li><a href="#" data-auth="signup">Create Account</a></li>
           <li><a href="#" data-auth="signin">Sign In</a></li>
+          <li><a href="app.html">MegaProjectPlanner App</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
       </div>
@@ -568,7 +572,7 @@
       <div class="who">
         <span class="avatar" id="avatarInit">?</span>
         <span id="whoText">Signed in</span>
-        <a class="btn btn-line-w btn-sm" href="index.html" target="_blank" rel="noopener" style="text-decoration:none">MegaProjectPlanner App</a>
+        <a class="btn btn-line-w btn-sm" href="app.html" target="_blank" rel="noopener" style="text-decoration:none">MegaProjectPlanner App</a>
         <button class="btn btn-line-w btn-sm" id="signOutBtn">Sign Out</button>
       </div>
     </div>
@@ -1055,6 +1059,11 @@ function toast(msg){
 }
 
 resetData();
+/* Deep links: index.html#signin / #signup open the account modal straight away */
+window.addEventListener("load",function(){
+  var h=(window.location.hash||"").replace("#","");
+  if((h==="signup"||h==="signin")&&document.getElementById("landingView").style.display!=="none"){ openAuth(h); }
+});
 })();
 </script>
 </body>
