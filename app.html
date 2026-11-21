@@ -4,6 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Megaprojectplanner.us.ci</title>
+    <!-- Account gate: the app opens only for signed-in users -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <style>html.app-gated body{visibility:hidden}</style>
+    <script>
+    (function(){
+      document.documentElement.className += ' app-gated';
+      var done=false;
+      function allow(){ if(done)return; done=true; document.documentElement.classList.remove('app-gated'); }
+      function deny(){ if(done)return; done=true; window.location.replace('index.html#signup'); }
+      setTimeout(function(){ if(!done) deny(); }, 5000);
+      try{
+        if(!firebase.apps.length){ firebase.initializeApp({apiKey:"AIzaSyAqHL8z4um2svoVUtUfuPn6ONhhPa9QOps",authDomain:"megaprojectplanner.firebaseapp.com",projectId:"megaprojectplanner",storageBucket:"megaprojectplanner.firebasestorage.app",messagingSenderId:"300326155803",appId:"1:300326155803:web:40bfc2628be2a750666abe"}); }
+        firebase.auth().onAuthStateChanged(function(u){ if(u) allow(); else deny(); });
+      }catch(e){ deny(); }
+    })();
+    </script>
+
     <style>
       #mpp-splash { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
         background: radial-gradient(circle at 50% 35%, #1e3a8a 0%, #0b1730 70%); color: #fff; font-family: 'Segoe UI', Arial, sans-serif; transition: opacity .35s ease; }
