@@ -315,7 +315,7 @@
           <h3>Compare Projects</h3>
           <p>Load two versions of the same project and read the difference: start and finish shifts, duration and progress changes, added and deleted activities — on an interactive Gantt and in a line-by-line table.</p>
           <div class="preview">
-            <div class="pbar"><span class="dot" style="background:#e0655f"></span><span class="dot" style="background:#e8b13f"></span><span class="dot" style="background:#57b06a"></span><span>M1-DES-2 · Package F — Baseline vs Update</span></div>
+            <div class="pbar"><span class="dot" style="background:#e0655f"></span><span class="dot" style="background:#e8b13f"></span><span class="dot" style="background:#57b06a"></span><span>Demo Highway Project — Baseline vs Update</span></div>
             <div class="pbody" id="miniGantt"></div>
           </div>
           <p><a href="#" data-auth="signup" class="btn btn-outline">Try It Free</a></p>
@@ -498,13 +498,13 @@
           <div class="ver-grid">
             <div class="ver">
               <h3>Version A — Baseline Programme (Rev 0)</h3>
-              <p>M1-DES-2 · Package F — Roads, Bridges &amp; Utilities</p>
-              <div class="meta"><span>Project ID: M1-DES-2-PKF</span><span id="metaA"></span></div>
+              <p>Demo Highway Project — Sample Data</p>
+              <div class="meta"><span>Project ID: DEMO-HWY-01</span><span id="metaA"></span></div>
             </div>
             <div class="ver">
               <h3>Version B — Current Update (Rev 4)</h3>
-              <p>M1-DES-2 · Package F — Roads, Bridges &amp; Utilities</p>
-              <div class="meta"><span>Project ID: M1-DES-2-PKF</span><span id="metaB"></span></div>
+              <p>Demo Highway Project — Sample Data</p>
+              <div class="meta"><span>Project ID: DEMO-HWY-01</span><span id="metaB"></span></div>
             </div>
           </div>
           <div class="stats" id="statRow"></div>
@@ -613,12 +613,12 @@ var saveTimer=null;
 function saveWork(){
   if(!fbDb||!fbAuth||!fbAuth.currentUser) return;
   var uid=fbAuth.currentUser.uid;
-  fbDb.collection("users").doc(uid).collection("projects").doc("m1-des-2").set({verB:verB,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});
+  fbDb.collection("users").doc(uid).collection("projects").doc("demo-highway").set({verB:verB,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});
 }
 function saveWorkSoon(){ if(saveTimer) clearTimeout(saveTimer); saveTimer=setTimeout(saveWork,1200); }
 function loadWork(user){
   if(!fbDb) return Promise.resolve();
-  return fbDb.collection("users").doc(user.uid).collection("projects").doc("m1-des-2").get().then(function(snap){
+  return fbDb.collection("users").doc(user.uid).collection("projects").doc("demo-highway").get().then(function(snap){
     if(snap.exists&&snap.data()&&Array.isArray(snap.data().verB)&&snap.data().verB.length){ verB=snap.data().verB; }
     renderAll();
   }).catch(function(){});
@@ -632,34 +632,34 @@ function finish(a){return new Date(d(a.start).getTime()+(a.dur-1)*DAY);}
 function daysBetween(x,y){return Math.round((y-x)/DAY);}
 
 var SAMPLE_A=[
- {id:"A1000",name:"Mobilisation & Site Establishment",start:"2026-01-05",dur:20,pct:100},
- {id:"A1010",name:"Site Clearance & Earthworks — Zone 1",start:"2026-01-26",dur:45,pct:100},
- {id:"A1020",name:"Storm Water Drainage Network",start:"2026-02-16",dur:60,pct:85},
- {id:"A1030",name:"Potable Water & Irrigation Utilities",start:"2026-03-02",dur:55,pct:70},
- {id:"A1040",name:"Electrical Substation Foundations",start:"2026-03-16",dur:40,pct:60},
- {id:"A1050",name:"Bridge B1 — Piling Works",start:"2026-03-30",dur:35,pct:55},
- {id:"A1060",name:"Bridge B1 — Substructure Concrete",start:"2026-05-04",dur:42,pct:30},
- {id:"A1070",name:"Road Sub-base & Base Course — Zone 1",start:"2026-04-20",dur:38,pct:45},
- {id:"A1080",name:"Transmission Line Tower Erection",start:"2026-05-18",dur:30,pct:10},
- {id:"A1090",name:"Asphalt Wearing Course — Zone 1",start:"2026-05-25",dur:25,pct:0},
- {id:"A1100",name:"Street Lighting Installation",start:"2026-06-08",dur:28,pct:0},
- {id:"A1110",name:"Generator Farm Installation & Testing",start:"2026-06-22",dur:32,pct:0},
- {id:"A1120",name:"Testing, Commissioning & Handover",start:"2026-07-20",dur:15,pct:0}
+ {id:"D1000",name:"Mobilisation & Site Establishment",start:"2026-01-05",dur:20,pct:100},
+ {id:"D1010",name:"Site Clearance & Earthworks",start:"2026-01-26",dur:45,pct:100},
+ {id:"D1020",name:"Storm Water Drainage Network",start:"2026-02-16",dur:60,pct:85},
+ {id:"D1030",name:"Water Supply & Irrigation Network",start:"2026-03-02",dur:55,pct:70},
+ {id:"D1040",name:"Substation Foundations",start:"2026-03-16",dur:40,pct:60},
+ {id:"D1050",name:"Bridge A — Piling Works",start:"2026-03-30",dur:35,pct:55},
+ {id:"D1060",name:"Bridge A — Substructure Concrete",start:"2026-05-04",dur:42,pct:30},
+ {id:"D1070",name:"Road Sub-base & Base Course",start:"2026-04-20",dur:38,pct:45},
+ {id:"D1080",name:"Overhead Line Tower Erection",start:"2026-05-18",dur:30,pct:10},
+ {id:"D1090",name:"Asphalt Wearing Course",start:"2026-05-25",dur:25,pct:0},
+ {id:"D1100",name:"Street Lighting Installation",start:"2026-06-08",dur:28,pct:0},
+ {id:"D1110",name:"Standby Power Installation & Testing",start:"2026-06-22",dur:32,pct:0},
+ {id:"D1120",name:"Testing, Commissioning & Handover",start:"2026-07-20",dur:15,pct:0}
 ];
 var SAMPLE_B=[
- {id:"A1000",name:"Mobilisation & Site Establishment",start:"2026-01-05",dur:20,pct:100},
- {id:"A1010",name:"Site Clearance & Earthworks — Zone 1",start:"2026-01-26",dur:52,pct:100},
- {id:"A1020",name:"Storm Water Drainage Network",start:"2026-02-23",dur:60,pct:78},
- {id:"A1030",name:"Potable Water & Irrigation Utilities",start:"2026-03-02",dur:55,pct:70},
- {id:"A1040",name:"Electrical Substation Foundations",start:"2026-03-16",dur:46,pct:52},
- {id:"A1050",name:"Bridge B1 — Piling Works",start:"2026-04-06",dur:35,pct:48},
- {id:"A1060",name:"Bridge B1 — Substructure Concrete",start:"2026-05-11",dur:42,pct:22},
- {id:"A1070",name:"Road Sub-base & Base Course — Zone 1",start:"2026-04-20",dur:38,pct:45},
- {id:"A1080",name:"Transmission Line Tower Erection",start:"2026-05-18",dur:30,pct:10},
- {id:"A1090",name:"Asphalt Wearing Course — Zone 1",start:"2026-06-01",dur:25,pct:0},
- {id:"A1100",name:"Street Lighting & ITS Installation",start:"2026-06-08",dur:28,pct:0},
- {id:"A1115",name:"Temporary Diversion Road — Phase 2",start:"2026-06-15",dur:18,pct:15},
- {id:"A1120",name:"Testing, Commissioning & Handover",start:"2026-07-27",dur:15,pct:0}
+ {id:"D1000",name:"Mobilisation & Site Establishment",start:"2026-01-05",dur:20,pct:100},
+ {id:"D1010",name:"Site Clearance & Earthworks",start:"2026-01-26",dur:52,pct:100},
+ {id:"D1020",name:"Storm Water Drainage Network",start:"2026-02-23",dur:60,pct:78},
+ {id:"D1030",name:"Water Supply & Irrigation Network",start:"2026-03-02",dur:55,pct:70},
+ {id:"D1040",name:"Substation Foundations",start:"2026-03-16",dur:46,pct:52},
+ {id:"D1050",name:"Bridge A — Piling Works",start:"2026-04-06",dur:35,pct:48},
+ {id:"D1060",name:"Bridge A — Substructure Concrete",start:"2026-05-11",dur:42,pct:22},
+ {id:"D1070",name:"Road Sub-base & Base Course",start:"2026-04-20",dur:38,pct:45},
+ {id:"D1080",name:"Overhead Line Tower Erection",start:"2026-05-18",dur:30,pct:10},
+ {id:"D1090",name:"Asphalt Wearing Course",start:"2026-06-01",dur:25,pct:0},
+ {id:"D1100",name:"Street Lighting & ITS Installation",start:"2026-06-08",dur:28,pct:0},
+ {id:"D1115",name:"Temporary Access Road — Phase 2",start:"2026-06-15",dur:18,pct:15},
+ {id:"D1120",name:"Testing, Commissioning & Handover",start:"2026-07-27",dur:15,pct:0}
 ];
 var DATA_DATE="2026-06-30";
 
@@ -816,7 +816,7 @@ function enterApp(){
   document.getElementById("whoText").textContent=account.name+" · "+account.email;
   document.getElementById("avatarInit").textContent=account.name.trim().charAt(0).toUpperCase()||"?";
   window.scrollTo(0,0);
-  toast("Welcome, "+account.name.split(" ")[0]+" — your workspace is ready. Sample project M1-DES-2 Package F is loaded.");
+  toast("Welcome, "+account.name.split(" ")[0]+" — your workspace is ready. Sample project Demo Highway Project is loaded.");
 }
 document.getElementById("authForm").addEventListener("submit",function(ev){
   ev.preventDefault();
@@ -952,7 +952,7 @@ document.getElementById("csvBtn").addEventListener("click",function(){
   var blob=new Blob([lines.join("\n")],{type:"text/csv"});
   var aEl=document.createElement("a");
   aEl.href=URL.createObjectURL(blob);
-  aEl.download="M1-DES-2_PackageF_Compare_Report.csv";
+  aEl.download="Demo_Highway_Compare_Report.csv";
   document.body.appendChild(aEl); aEl.click(); document.body.removeChild(aEl);
   setTimeout(function(){URL.revokeObjectURL(aEl.href);},2000);
   toast("Change report downloaded.");
